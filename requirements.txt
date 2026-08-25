@@ -1,0 +1,6 @@
+Flask
+cryptography
+scikit-learn
+pandas
+numpy
+joblib

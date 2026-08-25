@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Document</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Sign Document</h1>
+
+<form method="POST"
+      enctype="multipart/form-data">
+
+    <label>Username:</label>
+    <input type="text"
+           name="username"
+           required>
+
+    <br><br>
+
+    <label>Select Document:</label>
+    <input type="file"
+           name="document"
+           required>
+
+    <br><br>
+
+    <button type="submit">
+        Sign Document
+    </button>
+
+</form>
+
+{% if result %}
+
+<hr>
+
+<h2>Signature Created</h2>
+
+<p>
+Filename:
+{{ result.filename }}
+</p>
+
+<p>
+Username:
+{{ result.username }}
+</p>
+
+<label>Signature:</label>
+
+<textarea rows="8"
+          cols="80">{{ result.signature }}</textarea>
+
+<p>
+Save this signature for verification.
+</p>
+
+{% endif %}
+
+<a href="/">Back to Home</a>
+
+</div>
+
+</body>
+</html>
