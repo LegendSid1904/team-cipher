@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign a Document | SIH26141</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="app">
+    <header class="header">
+        <div class="header-text">
+            <span class="tag">SIH26141 · BETA</span>
+            <h1>Sign a Document</h1>
+            <p>Produce a digital signature and register your public key for later verification.</p>
+        </div>
+        <a class="status" href="/" style="text-decoration:none">
+            <span class="dot"></span><span id="statusText">← Back</span>
+        </a>
+    </header>
+
+    <section class="card">
+        <h2>Signature Request</h2>
+        <p class="muted">Give the signer a label, choose your key, and upload the document to sign.</p>
+
+        <div class="form-grid">
+            <label>
+                <span>Signer label <em>(must be unique by definition)</em></span>
+                <input type="text" id="labelInput" placeholder="e.g. alice" autocomplete="off">
+            </label>
+
+            <label>
+                <span>Display name <em>(optional)</em></span>
+                <input type="text" id="nameInput" placeholder="e.g. Alice Partner" autocomplete="off">
+            </label>
+        </div>
+
+        <div class="file-grid single">
+            <div class="file-box" id="boxDocument">
+                <div class="icon doc">DOC</div>
+                <div class="file-meta">
+                    <strong>Document to sign</strong>
+                    <span>the file you want signed</span>
+                    <em class="file-name">selected: none</em>
+                </div>
+                <input type="file" id="documentInput">
+            </div>
+
+            <div class="file-box" id="boxPrivateKey">
+                <div class="icon key">KEY</div>
+                <div class="file-meta">
+                    <strong>Private key <em>(optional)</em></strong>
+                    <span>signs with your existing key</span>
+                    <em class="file-name">selected: none</em>
+                </div>
+                <input type="file" id="privateKeyInput">
+            </div>
+        </div>
+
+        <p class="muted" style="margin-top:10px">
+            No private key? A new 2048-bit keypair is generated for you and the public key is
+            registered automatically — you can download the private key to keep.
+        </p>
+
+        <button id="signBtn" class="primary" type="button">Sign &amp; Register Key</button>
+
+        <div id="loading" class="loading hidden">
+            <span class="spinner"></span> Signing document…
+        </div>
+        <div id="errorBox" class="error hidden"></div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="hidden">
+        <div class="card">
+            <h2>Signature Created</h2>
+            <div class="auth-row">
+                <div id="authIcon" class="auth-icon ok">✓</div>
+                <div>
+                    <div id="signResult" class="auth-status ok">SIGNED</div>
+                    <p class="muted" id="signSub">Document signed and public key registered.</p>
+                </div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric"><span>SIGNER</span><strong id="resLabel">–</strong></div>
+                <div class="metric"><span>KEY SIZE</span><strong id="resKeySize">–</strong></div>
+                <div class="metric"><span>NEW KEY</span><strong id="resNewKey">–</strong></div>
+                <div class="metric"><span>SIGNATURE</span><strong id="resSigSize">–</strong></div>
+            </div>
+
+            <div class="btn-row">
+                <button id="downloadSigBtn" class="btn soft" type="button">Download Signature</button>
+                <button id="downloadKeyBtn" class="btn soft hidden" type="button">Download Private Key</button>
+                <a class="btn soft" href="/verify">Go Verify →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- REGISTERED KEYS -->
+    <section class="card">
+        <h2>Registered Keys</h2>
+        <p class="muted">Public keys available for verification.</p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Label</th><th>Name</th><th>Key size</th><th>Registered</th></tr>
+                </thead>
+                <tbody id="keysBody">
+                    <tr><td colspan="4" class="muted">Loading…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <span>SIH26141</span>
+        <span>Beta demo · not production</span>
+    </footer>
+</div>
+
+<script src="/static/sign.js"></script>
+</body>
+</html>

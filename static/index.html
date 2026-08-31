@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIH26141 | Signature Security Analyzer</title>
+    <title>SIH26141 | Digital Signature Security</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -14,8 +14,8 @@
     <header class="header">
         <div class="header-text">
             <span class="tag">SIH26141 · BETA</span>
-            <h1>Digital Signature<br>Security Analyzer</h1>
-            <p>Quantum-inspired threat detection for digital signature security.</p>
+            <h1>Digital Signature<br>Security System</h1>
+            <p>Sign documents, register keys, and verify authenticity with threat detection.</p>
         </div>
         <div class="status" id="healthStatus">
             <span class="dot"></span>
@@ -23,103 +23,24 @@
         </div>
     </header>
 
-    <!-- UPLOAD -->
-    <section class="card">
-        <h2>Authenticate a Document</h2>
-        <p class="muted">
-            Upload the document, its digital signature, and the signer's public key.
-        </p>
-
-        <div class="file-grid">
-            <div class="file-box" id="boxDocument">
-                <div class="icon doc">DOC</div>
-                <div class="file-meta">
-                    <strong>1 · Document</strong>
-                    <span>the file that was signed</span>
-                    <em class="file-name">selected: none</em>
-                </div>
-                <input type="file" id="documentInput">
+    <!-- ACTION CARDS -->
+    <section class="hub">
+        <a class="hub-card sign" href="/sign">
+            <span class="hub-icon">✎</span>
+            <div>
+                <strong>Sign a Document</strong>
+                <p>Generate a keypair, sign your document, and register your public key.</p>
             </div>
-
-            <div class="file-box" id="boxSignature">
-                <div class="icon sig">SIG</div>
-                <div class="file-meta">
-                    <strong>2 · Signature</strong>
-                    <span>the .sig file (RSA-PSS)</span>
-                    <em class="file-name">selected: none</em>
-                </div>
-                <input type="file" id="signatureInput">
+            <span class="hub-arrow">→</span>
+        </a>
+        <a class="hub-card verify" href="/verify">
+            <span class="hub-icon">✓</span>
+            <div>
+                <strong>Verify a Document</strong>
+                <p>Upload a document + signature, verify with the signer's stored key.</p>
             </div>
-
-            <div class="file-box" id="boxPublicKey">
-                <div class="icon key">KEY</div>
-                <div class="file-meta">
-                    <strong>3 · Public Key</strong>
-                    <span>the signer's .pem key</span>
-                    <em class="file-name">selected: none</em>
-                </div>
-                <input type="file" id="publicKeyInput">
-            </div>
-        </div>
-
-        <button id="analyzeBtn" class="primary" type="button">Verify &amp; Analyze</button>
-
-        <div id="loading" class="loading hidden">
-            <span class="spinner"></span> Verifying signature and analyzing…
-        </div>
-
-        <div id="errorBox" class="error hidden"></div>
-    </section>
-
-    <!-- RESULTS -->
-    <section id="results" class="hidden">
-
-        <div class="card">
-            <h2>Cryptographic Authentication</h2>
-            <div class="auth-row">
-                <div id="authIcon" class="auth-icon">–</div>
-                <div>
-                    <div id="signatureVerification" class="auth-status">–</div>
-                    <p class="muted">Digital signature verification result</p>
-                </div>
-                <div class="crypto-meta">
-                    <div><span>Algorithm</span><strong>RSA-PSS</strong></div>
-                    <div><span>Hash</span><strong>SHA-256</strong></div>
-                    <div><span>Key size</span><strong id="keySize">–</strong></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>Threat Analysis</h2>
-            <div class="metrics">
-                <div class="metric"><span>RISK SCORE</span><strong id="riskScore">–</strong></div>
-                <div class="metric"><span>THREAT LEVEL</span><strong id="threatLevel">–</strong></div>
-                <div class="metric"><span>ATTACK CATEGORY</span><strong id="attackCategory">–</strong></div>
-                <div class="metric"><span>ASSESSMENT</span><strong id="assessment">–</strong></div>
-            </div>
-
-            <div class="risk-block">
-                <div class="risk-head"><span>Risk Score</span><strong id="riskText">0 / 100</strong></div>
-                <div class="risk-bar"><div id="riskFill" class="risk-fill"></div></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>Indicators</h2>
-            <ul id="indicators" class="list"></ul>
-        </div>
-
-        <div class="card">
-            <h2>Explanation</h2>
-            <ul id="explanation" class="list"></ul>
-        </div>
-
-        <div class="card">
-            <h2>Recommended Action</h2>
-            <ul id="recommendations" class="list"></ul>
-        </div>
-
+            <span class="hub-arrow">→</span>
+        </a>
     </section>
 
     <!-- DASHBOARD -->

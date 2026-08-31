@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify a Document | SIH26141</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="app">
+    <header class="header">
+        <div class="header-text">
+            <span class="tag">SIH26141 · BETA</span>
+            <h1>Verify a Document</h1>
+            <p>Upload the document and its signature. The signer's key is retrieved automatically.</p>
+        </div>
+        <a class="status" href="/" style="text-decoration:none">
+            <span class="dot"></span><span id="statusText">← Back</span>
+        </a>
+    </header>
+
+    <section class="card">
+        <h2>Verification Request</h2>
+        <p class="muted">Enter the signer's label (the key used at signing time) and upload the two files.</p>
+
+        <label style="display:block; margin-bottom:12px">
+            <span>Signer label <em>(registered during Sign)</em></span>
+            <input type="text" id="labelInput" list="keyOptions" placeholder="e.g. alice" autocomplete="off">
+            <datalist id="keyOptions"></datalist>
+        </label>
+
+        <div class="file-grid two">
+            <div class="file-box" id="boxDocument">
+                <div class="icon doc">DOC</div>
+                <div class="file-meta">
+                    <strong>1 · Document</strong>
+                    <span>the file that was signed</span>
+                    <em class="file-name">selected: none</em>
+                </div>
+                <input type="file" id="documentInput">
+            </div>
+
+            <div class="file-box" id="boxSignature">
+                <div class="icon sig">SIG</div>
+                <div class="file-meta">
+                    <strong>2 · Signature</strong>
+                    <span>the .sig file</span>
+                    <em class="file-name">selected: none</em>
+                </div>
+                <input type="file" id="signatureInput">
+            </div>
+        </div>
+
+        <button id="verifyBtn" class="primary" type="button">Verify Signature</button>
+
+        <div id="loading" class="loading hidden">
+            <span class="spinner"></span> Verifying signature…
+        </div>
+        <div id="errorBox" class="error hidden"></div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="hidden">
+        <div class="card">
+            <h2>Verification Result</h2>
+            <div class="auth-row">
+                <div id="authIcon" class="auth-icon">–</div>
+                <div>
+                    <div id="verifyStatus" class="auth-status">–</div>
+                    <p class="muted" id="verifySub">–</p>
+                </div>
+                <div class="crypto-meta">
+                    <div><span>Signer</span><strong id="resLabel">–</strong></div>
+                    <div><span>Key size</span><strong id="resKeySize">–</strong></div>
+                </div>
+            </div>
+
+            <div id="accessBanner" class="access hidden">
+                <span class="access-icon">✓</span>
+                <div>
+                    <strong id="accessTitle">ACCESS GRANTED</strong>
+                    <span id="accessMsg">Signature is authentic and the key matches this document.</span>
+                </div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric"><span>RISK SCORE</span><strong id="riskScore">–</strong></div>
+                <div class="metric"><span>THREAT LEVEL</span><strong id="threatLevel">–</strong></div>
+                <div class="metric"><span>ATTACK CATEGORY</span><strong id="attackCategory">–</strong></div>
+                <div class="metric"><span>ASSESSMENT</span><strong id="assessment">–</strong></div>
+            </div>
+            <div class="risk-block">
+                <div class="risk-head"><span>Risk Score</span><strong id="riskText">0 / 100</strong></div>
+                <div class="risk-bar"><div id="riskFill" class="risk-fill"></div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <span>SIH26141</span>
+        <span>Beta demo · not production</span>
+    </footer>
+</div>
+
+<script src="/static/verify.js"></script>
+</body>
+</html>
