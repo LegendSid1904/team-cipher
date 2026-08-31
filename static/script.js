@@ -13,6 +13,28 @@ const errorBox = $("errorBox");
 const results = $("results");
 
 // ---------------------------------------------------------------
+// File selection feedback
+// ---------------------------------------------------------------
+function wireFileField(inputId, boxId) {
+    const input = $(inputId);
+    const box = $(boxId);
+    input.addEventListener("change", () => {
+        const file = input.files[0];
+        if (file) {
+            box.classList.add("selected");
+            box.querySelector(".file-name").textContent = "selected: " + file.name;
+        } else {
+            box.classList.remove("selected");
+            box.querySelector(".file-name").textContent = "selected: none";
+        }
+    });
+}
+
+wireFileField("documentInput", "boxDocument");
+wireFileField("signatureInput", "boxSignature");
+wireFileField("publicKeyInput", "boxPublicKey");
+
+// ---------------------------------------------------------------
 // Health
 // ---------------------------------------------------------------
 async function checkHealth() {

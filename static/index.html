@@ -31,29 +31,32 @@
         </p>
 
         <div class="file-grid">
-            <div class="file-box">
+            <div class="file-box" id="boxDocument">
                 <div class="icon doc">DOC</div>
                 <div class="file-meta">
-                    <strong>Document</strong>
-                    <span>signed file</span>
+                    <strong>1 · Document</strong>
+                    <span>the file that was signed</span>
+                    <em class="file-name">selected: none</em>
                 </div>
                 <input type="file" id="documentInput">
             </div>
 
-            <div class="file-box">
+            <div class="file-box" id="boxSignature">
                 <div class="icon sig">SIG</div>
                 <div class="file-meta">
-                    <strong>Signature</strong>
-                    <span>RSA-PSS signature</span>
+                    <strong>2 · Signature</strong>
+                    <span>the .sig file (RSA-PSS)</span>
+                    <em class="file-name">selected: none</em>
                 </div>
                 <input type="file" id="signatureInput">
             </div>
 
-            <div class="file-box">
+            <div class="file-box" id="boxPublicKey">
                 <div class="icon key">KEY</div>
                 <div class="file-meta">
-                    <strong>Public Key</strong>
-                    <span>PEM public key</span>
+                    <strong>3 · Public Key</strong>
+                    <span>the signer's .pem key</span>
+                    <em class="file-name">selected: none</em>
                 </div>
                 <input type="file" id="publicKeyInput">
             </div>
