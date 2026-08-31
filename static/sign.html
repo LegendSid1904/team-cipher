@@ -90,6 +90,14 @@
                 <div class="metric"><span>SIGNATURE</span><strong id="resSigSize">–</strong></div>
             </div>
 
+            <div class="copy-card">
+                <div class="copy-head">
+                    <span>Public key <em>(share this to let others verify)</em></span>
+                    <button id="copyKeyBtn" class="btn soft small" type="button">Copy</button>
+                </div>
+                <textarea id="resPublicKey" class="key-box" readonly spellcheck="false"></textarea>
+            </div>
+
             <div class="btn-row">
                 <button id="downloadSigBtn" class="btn soft" type="button">Download Signature</button>
                 <button id="downloadKeyBtn" class="btn soft hidden" type="button">Download Private Key</button>

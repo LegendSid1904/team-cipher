@@ -145,6 +145,7 @@ async def sign_document_endpoint(
         "key_size": key_size,
         "signature_b64": base64.b64encode(signature).decode("utf-8"),
         "private_key_b64": generated_private,  # only when freshly generated
+        "public_key": public_pem,
         "document_name": document.filename or "document",
     }
 
@@ -156,7 +157,8 @@ async def sign_document_endpoint(
 async def verify_document_endpoint(
     document: UploadFile = File(...),
     signature: UploadFile = File(...),
-    label: str = Form(...),
+    label: Optional[str] = Form(None),
+    public_key: Optional[str] = Form(None),
 ):
     document_data = await document.read()
     signature_data = await signature.read()
@@ -166,15 +168,22 @@ async def verify_document_endpoint(
     if not signature_data:
         raise HTTPException(400, "Signature file is empty.")
 
-    label = label.strip().lower()
-    record = keystore.get_public_key(label)
-    if record is None:
-        raise HTTPException(
-            404,
-            f"No public key registered for label '{label}'. Sign the document first to register a key, or check the label.",
-        )
+    key_label = (label or "").strip().lower()
+    public_key_pem = None
 
-    public_key_pem = record["public_key"].encode("utf-8")
+    if public_key and public_key.strip():
+        public_key_pem = public_key.strip().encode("utf-8")
+    elif key_label:
+        record = keystore.get_public_key(key_label)
+        if record is None:
+            raise HTTPException(
+                404,
+                f"No public key registered for label '{key_label}'. Sign the document first to register a key, or check the label.",
+            )
+        public_key_pem = record["public_key"].encode("utf-8")
+        key_label = record.get("name") or key_label
+    else:
+        raise HTTPException(400, "Provide the signer label or paste the public key.")
 
     verification = verify_rsa_pss_signature(
         document_data, signature_data, public_key_pem
@@ -195,6 +204,20 @@ async def verify_document_endpoint(
         "threat_level": result["threat_level"],
         "attack_category": result["attack_category"],
         "assessment": result["assessment"],
+    }
+    storage.add_event(event_payload)
+
+    return {
+        "success": True,
+        "result": {
+            **result,
+            "document_name": display_name,
+            "document_size": len(document_data),
+            "signature_size": len(signature_data),
+            "key_size": key_size,
+        },
+        "key_label": key_label,
+        "event": event_payload,
     }
     storage.add_event(event_payload)
 

@@ -23,21 +23,41 @@ const verifyBtn = $("verifyBtn");
 const loading = $("loading");
 const errorBox = $("errorBox");
 
+let currentMode = "label";
+
+document.querySelectorAll(".seg-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+        currentMode = btn.dataset.mode;
+        document.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+        $("modeLabel").classList.toggle("hidden", currentMode !== "label");
+        $("modeKey").classList.toggle("hidden", currentMode !== "key");
+    });
+});
+
 verifyBtn.addEventListener("click", async () => {
     hideError();
 
     const doc = $("documentInput").files[0];
     const sig = $("signatureInput").files[0];
     const label = $("labelInput").value.trim();
+    const pastedKey = $("keyInput").value.trim();
 
     if (!doc) return showError("Select the document file.");
     if (!sig) return showError("Select the signature file.");
-    if (!label) return showError("Enter the signer label.");
 
     const formData = new FormData();
     formData.append("document", doc);
     formData.append("signature", sig);
-    formData.append("label", label);
+
+    let keyLabel = null;
+    if (currentMode === "label") {
+        if (!label) return showError("Enter the signer label, or switch to 'Paste public key'.");
+        formData.append("label", label);
+        keyLabel = label;
+    } else {
+        if (!pastedKey) return showError("Paste the public key to verify with.");
+        formData.append("public_key", pastedKey);
+    }
 
     verifyBtn.disabled = true;
     loading.classList.remove("hidden");
@@ -52,7 +72,7 @@ verifyBtn.addEventListener("click", async () => {
             throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
         }
 
-        displayResult(data.result, data.key_label);
+        displayResult(data.result, data.key_label || keyLabel || "pasted key");
     } catch (err) {
         showError(err.message);
     } finally {

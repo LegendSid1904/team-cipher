@@ -315,6 +315,53 @@ label input[type="text"]:focus {
 .access.denied .access-icon { background: var(--bad); }
 .access.denied strong { color: var(--bad); }
 
+/* ---------- copy-card / key boxes ---------- */
+.copy-card {
+    margin-top: 16px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 14px;
+    background: #fafbfc;
+}
+.copy-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+}
+.copy-head span { font-size: 12px; font-weight: 700; }
+.copy-head em { font-weight: 400; color: var(--muted); }
+.btn.small { padding: 6px 12px; font-size: 12px; }
+.key-box {
+    width: 100%;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--text);
+    resize: vertical;
+}
+textarea.key-box { min-height: 90px; }
+
+/* ---------- segmented mode toggle (verify) ---------- */
+.seg {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+.seg-btn {
+    padding: 10px 16px;
+    font-size: 13px; font-weight: 700;
+    border: none; background: var(--card); color: var(--muted);
+    cursor: pointer;
+}
+.seg-btn + .seg-btn { border-left: 1px solid var(--border); }
+.seg-btn.active { background: var(--dark); color: #fff; }
+.mode-pane { margin-bottom: 6px; }
+
 /* ---------- responsive ---------- */
 @media (max-width: 820px) {
     .file-grid { grid-template-columns: 1fr; }

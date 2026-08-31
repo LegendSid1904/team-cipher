@@ -65,10 +65,12 @@ signBtn.addEventListener("click", async () => {
 
 let lastSignatureB64 = null;
 let lastPrivateB64 = null;
+let lastPublicKey = null;
 
 function showResult(data) {
     lastSignatureB64 = data.signature_b64 || null;
     lastPrivateB64 = data.private_key_b64 || null;
+    lastPublicKey = data.public_key || null;
 
     $("resLabel").textContent = data.label;
     $("resKeySize").textContent = data.key_size ? data.key_size + " bits" : "–";
@@ -76,11 +78,27 @@ function showResult(data) {
     $("resSigSize").textContent = lastSignatureB64
         ? Math.round((lastSignatureB64.length * 3) / 4) + " bytes"
         : "–";
+    $("resPublicKey").value = lastPublicKey || "";
 
+    $("copyKeyBtn").textContent = "Copy";
     $("downloadKeyBtn").classList.toggle("hidden", !lastPrivateB64);
     $("result").classList.remove("hidden");
     $("result").scrollIntoView({ behavior: "smooth", block: "start" });
 }
+
+$("copyKeyBtn").addEventListener("click", async () => {
+    if (!lastPublicKey) return;
+    try {
+        await navigator.clipboard.writeText(lastPublicKey);
+        $("copyKeyBtn").textContent = "Copied ✓";
+        setTimeout(() => ( $("copyKeyBtn").textContent = "Copy"), 1500);
+    } catch (e) {
+        $("resPublicKey").select();
+        document.execCommand("copy");
+        $("copyKeyBtn").textContent = "Copied ✓";
+        setTimeout(() => ( $("copyKeyBtn").textContent = "Copy"), 1500);
+    }
+});
 
 $("downloadSigBtn").addEventListener("click", () => {
     if (!lastSignatureB64) return;
