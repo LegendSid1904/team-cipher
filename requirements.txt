@@ -1,6 +1,5 @@
-Flask
+fastapi
+uvicorn
 cryptography
-scikit-learn
-pandas
-numpy
-joblib
+python-multipart
+pydantic
