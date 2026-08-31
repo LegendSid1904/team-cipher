@@ -13,7 +13,7 @@
         <div class="header-text">
             <span class="tag">SIH26141 · BETA</span>
             <h1>Verify a Document</h1>
-            <p>Upload the document and its signature. The signer's key is retrieved automatically.</p>
+            <p>Upload the document + its signature, paste the signer's public key.</p>
         </div>
         <a class="status" href="/" style="text-decoration:none">
             <span class="dot"></span><span id="statusText">← Back</span>
@@ -22,28 +22,16 @@
 
     <section class="card">
         <h2>Verification Request</h2>
-        <p class="muted">Pick how to identify the signer's key, then upload the two files.</p>
+        <p class="muted">
+            Paste the <strong>public key</strong> you copied when signing (the private key stays with
+            the signer and is never needed here). Then upload the document and its signature file.
+        </p>
 
-        <div class="seg">
-            <button class="seg-btn active" data-mode="label" type="button">Use saved key (label)</button>
-            <button class="seg-btn" data-mode="key" type="button">Paste public key</button>
-        </div>
-
-        <div id="modeLabel" class="mode-pane">
-            <label style="display:block; margin-bottom:12px">
-                <span>Signer label <em>(registered during Sign)</em></span>
-                <input type="text" id="labelInput" list="keyOptions" placeholder="e.g. alice" autocomplete="off">
-                <datalist id="keyOptions"></datalist>
-            </label>
-        </div>
-
-        <div id="modeKey" class="mode-pane hidden">
-            <label style="display:block; margin-bottom:12px">
-                <span>Paste the public key <em>(copy from the Sign page)</em></span>
-                <textarea id="keyInput" class="key-box" rows="6" spellcheck="false"
-                    placeholder="-----BEGIN PUBLIC KEY-----&#10;...&#10;-----END PUBLIC KEY-----"></textarea>
-            </label>
-        </div>
+        <label style="display:block; margin-bottom:16px">
+            <span>Paste the public key <em>(from the Sign page → copy)</em></span>
+            <textarea id="keyInput" class="key-box" rows="6" spellcheck="false"
+                placeholder="-----BEGIN PUBLIC KEY-----&#10;...&#10;-----END PUBLIC KEY-----"></textarea>
+        </label>
 
         <div class="file-grid two">
             <div class="file-box" id="boxDocument">
@@ -59,15 +47,15 @@
             <div class="file-box" id="boxSignature">
                 <div class="icon sig">SIG</div>
                 <div class="file-meta">
-                    <strong>2 · Signature</strong>
-                    <span>the .sig file</span>
+                    <strong>2 · Signature <em>(.sig)</em></strong>
+                    <span>created when you signed</span>
                     <em class="file-name">selected: none</em>
                 </div>
                 <input type="file" id="signatureInput">
             </div>
         </div>
 
-        <button id="verifyBtn" class="primary" type="button">Verify Signature</button>
+        <button id="verifyBtn" class="primary" type="button">Verify with Public Key</button>
 
         <div id="loading" class="loading hidden">
             <span class="spinner"></span> Verifying signature…
@@ -86,7 +74,6 @@
                     <p class="muted" id="verifySub">–</p>
                 </div>
                 <div class="crypto-meta">
-                    <div><span>Signer</span><strong id="resLabel">–</strong></div>
                     <div><span>Key size</span><strong id="resKeySize">–</strong></div>
                 </div>
             </div>
@@ -95,7 +82,7 @@
                 <span class="access-icon">✓</span>
                 <div>
                     <strong id="accessTitle">ACCESS GRANTED</strong>
-                    <span id="accessMsg">Signature is authentic and the key matches this document.</span>
+                    <span id="accessMsg">Signature is authentic and matches this public key.</span>
                 </div>
             </div>
 
