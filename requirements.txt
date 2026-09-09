@@ -3,3 +3,6 @@ uvicorn
 cryptography
 python-multipart
 pydantic
+pandas
+scikit-learn
+joblib

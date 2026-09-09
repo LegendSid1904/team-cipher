@@ -96,6 +96,43 @@
                 <div class="risk-head"><span>Risk Score</span><strong id="riskText">0 / 100</strong></div>
                 <div class="risk-bar"><div id="riskFill" class="risk-fill"></div></div>
             </div>
+
+            <div class="ml-grid">
+                <div class="metric ml">
+                    <span>ML PREDICTION</span>
+                    <strong id="mlPrediction">–</strong>
+                </div>
+                <div class="metric ml">
+                    <span>ML THREAT PROBABILITY</span>
+                    <strong id="threatProbability">–</strong>
+                </div>
+                <div class="metric ml">
+                    <span>REPLAY DETECTED</span>
+                    <strong id="replayFlag">–</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ANALYSIS DETAIL -->
+    <section id="analysis" class="hidden">
+        <div class="card">
+            <h2>Detection Analysis</h2>
+
+            <div class="analysis-block">
+                <h3>Contributing Indicators</h3>
+                <ul id="indicatorsList" class="list"></ul>
+            </div>
+
+            <div class="analysis-block">
+                <h3>Assessment Explanation</h3>
+                <ul id="explanationList" class="list"></ul>
+            </div>
+
+            <div class="analysis-block">
+                <h3>Recommended Actions</h3>
+                <ul id="recommendedActionList" class="list"></ul>
+            </div>
         </div>
     </section>
 

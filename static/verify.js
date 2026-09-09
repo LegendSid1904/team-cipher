@@ -85,6 +85,7 @@ function displayResult(r) {
         $("accessMsg").textContent = "Signature does not match — document is not trusted.";
     }
 
+    // Rule-based metrics
     $("riskScore").textContent = r.risk_score;
     $("threatLevel").textContent = r.threat_level;
     $("attackCategory").textContent = r.attack_category;
@@ -95,8 +96,48 @@ function displayResult(r) {
     $("riskText").textContent = `${safe} / 100`;
     $("riskFill").style.width = `${safe}%`;
 
+    // ML results
+    $("mlPrediction").textContent = r.ml_prediction || "–";
+    $("mlPrediction").className = "metric ml " +
+        (r.ml_prediction === "THREAT" ? "bad" : "ok");
+
+    const prob = Number(r.ml_threat_probability);
+    $("threatProbability").textContent =
+        Number.isFinite(prob) ? `${prob}%` : "–";
+
+    $("replayFlag").textContent = r.replay_detected ? "YES" : "NO";
+    $("replayFlag").className = "metric ml " +
+        (r.replay_detected ? "bad" : "ok");
+
+    // Analysis lists
+    fillList("indicatorsList", r.contributing_indicators);
+    fillList("explanationList", r.assessment_explanation);
+    fillList("recommendedActionList", r.recommended_action);
+
+    const analysis = $("analysis");
+    if (analysis) analysis.classList.remove("hidden");
+
     $("result").classList.remove("hidden");
     $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function fillList(id, items) {
+    const el = $(id);
+    if (!el) return;
+    el.innerHTML = "";
+    const arr = Array.isArray(items) ? items : [];
+    if (!arr.length) {
+        const li = document.createElement("li");
+        li.textContent = "None.";
+        li.style.color = "#6b7680";
+        el.appendChild(li);
+        return;
+    }
+    arr.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        el.appendChild(li);
+    });
 }
 
 function showError(msg) {

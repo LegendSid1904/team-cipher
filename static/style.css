@@ -203,6 +203,26 @@ h1 { font-size: clamp(26px, 4vw, 40px); line-height: 1.1; }
 .risk-bar { width: 100%; height: 11px; border-radius: 8px; background: #e7eaed; overflow: hidden; }
 .risk-fill { width: 0%; height: 100%; background: var(--dark); border-radius: inherit; transition: width 0.5s ease; }
 
+/* ---------- ML results ---------- */
+.ml-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+}
+.metric.ml.ok strong { color: var(--ok); }
+.metric.ml.bad strong { color: var(--bad); }
+.analysis-block { margin-top: 18px; }
+.analysis-block h3 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+.analysis-block .list li { margin-bottom: 7px; font-size: 14px; }
+
 /* ---------- lists ---------- */
 .list { padding-left: 20px; }
 .list li { margin-bottom: 8px; font-size: 14px; }
@@ -367,11 +387,13 @@ textarea.key-box { min-height: 90px; }
     .file-grid { grid-template-columns: 1fr; }
     .file-grid.single, .file-grid.two { grid-template-columns: 1fr; }
     .metrics { grid-template-columns: 1fr 1fr; }
+    .ml-grid { grid-template-columns: 1fr 1fr; }
     .crypto-meta { width: 100%; margin-left: 0; }
     .hub { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
     .metrics { grid-template-columns: 1fr; }
+    .ml-grid { grid-template-columns: 1fr; }
     .header { flex-direction: column; }
 }

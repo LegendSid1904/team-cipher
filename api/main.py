@@ -17,6 +17,7 @@ import os
 import sys
 import base64
 import binascii
+import hashlib
 from pathlib import Path
 
 # Ensure the _lib package (sibling of main.py) is importable
@@ -35,6 +36,7 @@ from _lib.crypto_verify import verify_rsa_pss_signature
 from _lib.crypto_sign import generate_keypair, sign_document
 from _lib.detector import detect_threat
 from _lib import storage, keystore
+from _lib import behavioral_store, replay_store
 
 app = FastAPI(
     title="SIH26141 Digital Signature Security",
@@ -50,11 +52,31 @@ VERIFY_HTML = STATIC_DIR / "verify.html"
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+# Recognized document extensions. Anything else is treated as a
+# possible metadata anomaly.
+_KNOWN_EXTENSIONS = {
+    "txt", "pdf", "doc", "docx", "xls", "xlsx",
+    "ppt", "pptx", "csv", "json", "xml",
+    "png", "jpg", "jpeg", "gif",
+}
+
 
 def _serve_page(path: Path):
     if path.exists():
         return FileResponse(str(path))
     raise HTTPException(404, "Page not found")
+
+
+def _metadata_anomaly(filename) -> int:
+    """Flag unusual / missing file extensions as metadata anomaly."""
+    if not filename:
+        return 1
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    return 0 if ext in _KNOWN_EXTENSIONS else 1
+
+
+def _document_hash(document_data: bytes) -> str:
+    return hashlib.sha256(document_data).hexdigest()
 
 
 # ---------------------------------------------------------------
@@ -80,11 +102,16 @@ def verify_page():
 # ---------------------------------------------------------------
 @app.get("/api/health")
 def health():
+    from _lib import ml_detector
     return {
         "success": True,
         "status": "healthy",
         "events_storage": storage._configured(),
         "keys_storage": keystore._configured(),
+        "behavioral_storage": behavioral_store._configured(),
+        "replay_storage": replay_store._configured(),
+        "ml_loaded": ml_detector.model_loaded(),
+        "ml_error": ml_detector.load_error(),
     }
 
 
@@ -192,7 +219,42 @@ async def verify_document_endpoint(
     valid = verification["valid"]
     key_size = verification["key_size"]
 
-    result = detect_threat(valid, key_size)
+    # ----- replay detection (before recording this request) ----
+    document_hash = _document_hash(document_data)
+    replay_detected = False
+    try:
+        replay_detected = replay_store.check_replay(document_hash)
+    except Exception:
+        replay_detected = False
+
+    # ----- behavioral features (before recording this request) -
+    source_id = key_label or "pasted_key"
+    metadata_anomaly = _metadata_anomaly(document.filename)
+    try:
+        behavioral = behavioral_store.calculate_behavioral_features(
+            current_verification_result=1 if valid else 0,
+            source_id=source_id,
+        )
+    except Exception:
+        behavioral = {
+            "verification_frequency": 1,
+            "source_frequency": 1,
+            "failed_verification_rate": 0.0 if valid else 1.0,
+            "time_since_previous": 0,
+            "hour": 0,
+        }
+
+    # ----- unified detection (rules + ML) -----------------------
+    result = detect_threat(
+        valid=valid,
+        key_size=key_size,
+        verification_frequency=behavioral["verification_frequency"],
+        source_frequency=behavioral["source_frequency"],
+        failed_verification_rate=behavioral["failed_verification_rate"],
+        metadata_anomaly=metadata_anomaly,
+        replay_indicator=1 if replay_detected else 0,
+        failed_attempts=0 if valid else 1,
+    )
 
     display_name = document.filename or "document"
 
@@ -204,8 +266,22 @@ async def verify_document_endpoint(
         "threat_level": result["threat_level"],
         "attack_category": result["attack_category"],
         "assessment": result["assessment"],
+        "ml_prediction": result["ml_prediction"],
+        "ml_threat_probability": result["ml_threat_probability"],
+        "replay_detected": replay_detected,
     }
     storage.add_event(event_payload)
+
+    # ----- persist state for future requests --------------------
+    try:
+        replay_store.record_document(document_hash)
+    except Exception:
+        pass
+
+    try:
+        behavioral_store.record_event(valid=valid, source_id=source_id)
+    except Exception:
+        pass
 
     return {
         "success": True,
@@ -215,23 +291,9 @@ async def verify_document_endpoint(
             "document_size": len(document_data),
             "signature_size": len(signature_data),
             "key_size": key_size,
+            "replay_detected": replay_detected,
         },
         "key_label": key_label,
-        "event": event_payload,
-    }
-    storage.add_event(event_payload)
-
-    return {
-        "success": True,
-        "result": {
-            **result,
-            "document_name": display_name,
-            "document_size": len(document_data),
-            "signature_size": len(signature_data),
-            "key_size": key_size,
-            # convenience: threat detection on document fingerprint
-        },
-        "key_label": label,
         "event": event_payload,
     }
 
