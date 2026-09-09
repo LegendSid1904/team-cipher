@@ -42,6 +42,8 @@ def _read() -> dict:
             payload = json.loads(response.read().decode("utf-8"))
             data = payload.get("record", {})
             if isinstance(data, dict):
+                if "keys" in data and isinstance(data["keys"], dict):
+                    return data["keys"]
                 return data
             return dict(_MEMORY)
     except Exception:
@@ -54,7 +56,7 @@ def _write(data: dict) -> bool:
     url = f"{BASE_URL}/{KEYS_BIN_ID}"
     request = urllib.request.Request(
         url,
-        data=json.dumps(data).encode("utf-8"),
+        data=json.dumps({"keys": data}).encode("utf-8"),
         method="PUT",
         headers={"Content-Type": "application/json", "X-Master-Key": API_KEY},
     )

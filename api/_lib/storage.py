@@ -45,6 +45,9 @@ def _read_from_jsonbin() -> list:
         with urllib.request.urlopen(request, timeout=8) as response:
             payload = json.loads(response.read().decode("utf-8"))
             data = payload.get("record", [])
+            if isinstance(data, dict):
+                events = data.get("events", [])
+                return events if isinstance(events, list) else []
             if isinstance(data, list):
                 return data
             return []
@@ -56,7 +59,7 @@ def _write_to_jsonbin(events: list) -> bool:
     url = f"{BASE_URL}/{JSONBIN_BIN_ID}"
     request = urllib.request.Request(
         url,
-        data=json.dumps(events).encode("utf-8"),
+        data=json.dumps({"events": events}).encode("utf-8"),
         method="PUT",
         headers={
             "Content-Type": "application/json",
