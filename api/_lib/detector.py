@@ -168,6 +168,19 @@ def detect_threat(
     else:
         assessment = "NORMAL SECURITY EVENT"
 
+    # ---- cryptographic security override ---------------------
+    # A cryptographically invalid document must never be
+    # presented as a normal / low-risk event. Preserve the actual
+    # ML prediction but raise the risk floor to suspicious.
+    if not valid:
+        risk_score = max(risk_score, 40)
+        if level == "LOW":
+            level = "MEDIUM"
+        if assessment == "NORMAL SECURITY EVENT":
+            assessment = "SUSPICIOUS SECURITY EVENT"
+        if "Digital signature verification failed" not in reasons:
+            reasons.insert(0, "Digital signature verification failed")
+
     explanation = _generate_explanation(
         valid, key_size, risk_score, level, ml, replay_indicator,
         failed_verification_rate, metadata_anomaly,
